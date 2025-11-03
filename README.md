@@ -1,4 +1,5 @@
 # Context Engineering Template
+
 Forked from: https://github.com/coleam00/context-engineering-intro
 
 A comprehensive template for getting started with Context Engineering - the discipline of engineering context for AI coding assistants so they have the information necessary to get the job done end to end.
@@ -145,6 +146,35 @@ Example (TypeScript only):
 }
 ```
 
+### Auto-Generate the Manifest (/bootstrap-stack)
+
+Instead of writing the manifest manually, let the assistant infer it:
+
+```
+/bootstrap-stack
+```
+
+What it does:
+
+- Detects monorepo (workspaces) vs single-package
+- Infers languages, build/test/lint/type-check scripts
+- Produces or merges `context/stack_manifest.json`
+- Provides a drift/change report
+
+Examples:
+
+```
+/bootstrap-stack context/stack_manifest.json --force
+/bootstrap-stack --package core-app
+```
+
+Next after generation:
+
+```
+/analyze-codebase analysis/stack_scan.md --package core-app
+```
+
+If satisfied, commit the manifest so future PRPs stay consistent.
 Yarn Workspaces Variant:
 
 ```json
@@ -202,6 +232,69 @@ Declare workspaces and packages in `context/stack_manifest.json`:
 }
 ```
 
+## Distribution Options (Advanced)
+
+You can offer even easier adoption with a Homebrew tap or an `npx` wrapper.
+
+### Homebrew Tap (Concept)
+
+1. Create a new repo: `acypert-godaddy/homebrew-context` (naming convention: `homebrew-<tap>`)
+2. Add a formula file `Formula/contextce.rb`:
+
+   ```ruby
+   class Contextce < Formula
+     desc "Context Engineering bootstrap / helper CLI"
+     homepage "https://github.com/acypert-godaddy/Context-Engineering-Starter"
+     url "https://github.com/acypert-godaddy/Context-Engineering-Starter/archive/refs/tags/v0.1.0.tar.gz"
+     sha256 "<tarball-sha256>"
+     license "MIT"
+
+     depends_on "bash"
+
+     def install
+       bin.install "scripts/contextce.sh" => "contextce"
+     end
+   end
+   ```
+
+3. Provide install instructions:
+   ```bash
+   brew tap acypert-godaddy/context
+   brew install contextce
+   contextce init   # e.g., runs installer script
+   ```
+
+### npx Wrapper (Concept)
+
+1. Create a tiny npm package (e.g. `@acypert/contextce`) with an `index.js` that:
+   - Downloads latest `install_context_engineering.sh`
+   - Spawns a child process to execute it
+2. `package.json` excerpt:
+   ```json
+   {
+     "name": "@acypert/contextce",
+     "version": "0.1.0",
+     "bin": { "contextce": "bin/cli.js" },
+     "dependencies": {}
+   }
+   ```
+3. Usage:
+   ```bash
+   npx @acypert/contextce --root ce --legacy
+   # or global
+   npm i -g @acypert/contextce
+   contextce --upgrade
+   ```
+
+### Choosing an Approach
+
+| Approach     | Pros                            | Cons                                  |
+| ------------ | ------------------------------- | ------------------------------------- |
+| curl script  | Zero dependencies               | Harder to version pin                 |
+| Homebrew tap | Easy upgrades on macOS          | macOS-focus, need formula maintenance |
+| npx wrapper  | Cross-platform, version pinning | Requires npm publishing               |
+
+Both advanced options can internally still call the maintained `install_context_engineering.sh` to keep logic DRY.
 Workflow examples:
 
 ```bash
