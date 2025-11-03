@@ -32,30 +32,39 @@ cd Context-Engineering-Starter
 
 ## ♻️ Using in an Existing Repository (Installation Mode)
 
-If you already have a codebase and want to bring Context Engineering workflows to it:
+Drop Context Engineering into any existing repo with **one command**:
 
 ```bash
-# From the root of YOUR existing repo (not this template)
-curl -O https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/scripts/install_context_engineering.sh
-bash install_context_engineering.sh context  # or another folder name
-
-# Copy the command markdown files (one-time)
-mkdir -p .claude/commands
-curl -o .claude/commands/init-context.md https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/.claude/commands/init-context.md
-curl -o .claude/commands/analyze-codebase.md https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/.claude/commands/analyze-codebase.md
-curl -o .claude/commands/generate-feature-prp.md https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/.claude/commands/generate-feature-prp.md
-curl -o .claude/commands/execute-feature-prp.md https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/.claude/commands/execute-feature-prp.md
-curl -o .claude/commands/update-prp.md https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/.claude/commands/update-prp.md
-
-# (Optional) Keep legacy greenfield commands too
-curl -o .claude/commands/generate-prp.md https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/.claude/commands/generate-prp.md
-curl -o .claude/commands/execute-prp.md https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/.claude/commands/execute-prp.md
+curl -fsSL https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/scripts/install_context_engineering.sh | bash
 ```
 
-Then inside Claude Code:
+This will:
+
+- Create `context/` with standard subfolders
+- Add `context/INITIAL.md` & YAML + JSON manifests
+- Download core Claude command files into `.claude/commands/`
+
+### Customizing the Install
+
+Use flags after `--` when piping to bash:
+
+```bash
+# Different context root directory
+curl -fsSL https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/scripts/install_context_engineering.sh | bash -s -- --root ce
+
+# Include legacy greenfield commands too
+curl -fsSL https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/scripts/install_context_engineering.sh | bash -s -- --legacy
+
+# Re-download / upgrade commands later
+bash scripts/install_context_engineering.sh --upgrade
+
+# Skip downloading commands (just scaffold folders)
+curl -fsSL https://raw.githubusercontent.com/acypert-godaddy/Context-Engineering-Starter/main/scripts/install_context_engineering.sh | bash -s -- --no-commands
+```
+
+### First Commands to Run (Inside Claude Code)
 
 ```
-/init-context context/
 /analyze-codebase analysis/initial_scan.md
 /generate-feature-prp context/INITIAL.md --analysis analysis/initial_scan.md
 /execute-feature-prp context/PRPs/<generated>.md
