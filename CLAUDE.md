@@ -1,59 +1,55 @@
 ### 🔄 Project Awareness & Context
-- **Always read `PLANNING.md`** at the start of a new conversation to understand the project's architecture, goals, style, and constraints.
-- **Check `TASK.md`** before starting a new task. If the task isn’t listed, add it with a brief description and today's date.
-- **Use consistent naming conventions, file structure, and architecture patterns** as described in `PLANNING.md`.
-- **Use venv_linux** (the virtual environment) whenever executing Python commands, including for unit tests.
+
+- **Always read `PLANNING.md` (if present)** at the start of a new conversation to understand architecture, goals, style, and constraints.
+- **Check `TASK.md` / task tracker** before starting a new task. If the task isn’t listed, add it with a brief description and today's date.
+- **Use consistent naming conventions, file structure, and architecture patterns** already established in the codebase.
+- **Activate the appropriate runtime environment** (venv, node version via nvm, Java toolchain, container, etc.) before running commands.
 
 ### 🧱 Code Structure & Modularity
-- **Never create a file longer than 500 lines of code.** If a file approaches this limit, refactor by splitting it into modules or helper files.
-- **Organize code into clearly separated modules**, grouped by feature or responsibility.
-  For agents this looks like:
-    - `agent.py` - Main agent definition and execution logic 
-    - `tools.py` - Tool functions used by the agent 
-    - `prompts.py` - System prompts
-- **Use clear, consistent imports** (prefer relative imports within packages).
-- **Use clear, consistent imports** (prefer relative imports within packages).
-- **Use python_dotenv and load_env()** for environment variables.
+
+- **Keep files focused** (soft guideline: avoid >500 LOC per file/module; split if growing complex).
+- **Group code by responsibility or bounded context** (feature modules, layers, packages, services).
+- For agent patterns, typical separation:
+  - `agent.(py|ts|go|java)` / `Agent` class: core orchestration
+  - `tools.*` / `tooling/`: tool & integration adapters
+  - `prompts.*` / `prompts/`: system & behavioral prompts
+- **Maintain consistent import / dependency patterns** (avoid cyclic dependencies, keep layering clear).
+- **Use existing configuration patterns** (env files, config objects, DI containers) instead of inventing new ones.
 
 ### 🧪 Testing & Reliability
-- **Always create Pytest unit tests for new features** (functions, classes, routes, etc).
-- **After updating any logic**, check whether existing unit tests need to be updated. If so, do it.
-- **Tests should live in a `/tests` folder** mirroring the main app structure.
+
+- **Always create or extend unit tests for new features** (functions, classes, endpoints, workflows, etc.).
+- **When logic changes**, update or add regression tests.
+- **Tests should live in a dedicated test directory** (e.g., `tests/`, `__tests__/`, `src/test/java/`).
   - Include at least:
-    - 1 test for expected use
-    - 1 edge case
-    - 1 failure case
+    - 1 expected / happy path case
+    - 1 edge / boundary case
+    - 1 failure / error-handling case
+- Prefer deterministic, isolated tests (mock external I/O where appropriate) + add at least one integration test for cross-module flows.
 
 ### ✅ Task Completion
+
 - **Mark completed tasks in `TASK.md`** immediately after finishing them.
 - Add new sub-tasks or TODOs discovered during development to `TASK.md` under a “Discovered During Work” section.
 
 ### 📎 Style & Conventions
-- **Use Python** as the primary language.
-- **Follow PEP8**, use type hints, and format with `black`.
-- **Use `pydantic` for data validation**.
-- Use `FastAPI` for APIs and `SQLAlchemy` or `SQLModel` for ORM if applicable.
-- Write **docstrings for every function** using the Google style:
-  ```python
-  def example():
-      """
-      Brief summary.
 
-      Args:
-          param1 (type): Description.
-
-      Returns:
-          type: Description.
-      """
-  ```
+- **Follow existing project conventions** (language style guides, lint rules, formatter configuration).
+- Use automated formatters / linters (e.g., `eslint`, `prettier`, `ruff`, `black`, `golangci-lint`, `ktlint`, `spotless`) as configured.
+- Use type systems / annotations where supported (TypeScript types, Java interfaces, Go types, Python type hints, etc.).
+- Provide **API / public interface documentation** (docstrings, JSDoc, Javadoc, Go comments) consistent with ecosystem norms.
+- Prefer explicit naming, pure functions where practical, and small cohesive modules.
 
 ### 📚 Documentation & Explainability
-- **Update `README.md`** when new features are added, dependencies change, or setup steps are modified.
-- **Comment non-obvious code** and ensure everything is understandable to a mid-level developer.
-- When writing complex logic, **add an inline `# Reason:` comment** explaining the why, not just the what.
+
+- **Update top-level docs** (README / architecture notes) when features, dependencies, or setup steps change.
+- **Explain non-obvious logic** with concise comments focused on intent & trade-offs.
+- For complex flows, add a short rationale block (e.g., `// Reason:` / `# Rationale:`) near the implementation.
 
 ### 🧠 AI Behavior Rules
-- **Never assume missing context. Ask questions if uncertain.**
-- **Never hallucinate libraries or functions** – only use known, verified Python packages.
-- **Always confirm file paths and module names** exist before referencing them in code or tests.
-- **Never delete or overwrite existing code** unless explicitly instructed to or if part of a task from `TASK.md`.
+
+- **Never assume missing context**—ask clarifying questions if ambiguity blocks correctness.
+- **Never hallucinate libraries, frameworks, or functions**—only use dependencies present or approved.
+- **Verify file paths, modules, and symbols** before referencing or modifying.
+- **Do not remove or rewrite large sections** unless explicitly part of the accepted task scope.
+- **Surface risks early** (e.g., potential breaking changes, migration needs, backward compatibility concerns).

@@ -1,0 +1,172 @@
+{
+  "version": 1,
+  "name": "context-engineering-starter",
+  "languages": [
+    {
+      "id": "typescript",
+      "role": "core-app",
+      "srcDir": "src",
+      "packageManager": "yarn",
+      "testPattern": "**/*.test.ts"
+    }
+  ],
+  "runtime": {
+    "node": "20.x"
+  },
+  "monorepo": {
+    "workspaces": true,
+    "packageManager": "yarn",
+    "rootScriptsDelegate": true,
+    "packagesDirPatterns": [
+      "packages/*",
+      "services/*"
+    ],
+    "defaultPackage": "core-app"
+  },
+  "packages": [
+    {
+      "name": "core-app",
+      "location": "packages/core-app",
+      "private": true,
+      "lang": "typescript",
+      "srcDir": "src",
+      "build": {
+        "install": "yarn install",
+        "build": "yarn build",
+        "dev": "yarn dev"
+      },
+      "quality": {
+        "lint": [
+          {
+            "name": "eslint",
+            "cmd": "yarn lint"
+          }
+        ],
+        "typeCheck": [
+          {
+            "name": "tsc",
+            "cmd": "yarn tsc --noEmit"
+          }
+        ],
+        "tests": {
+          "unit": {
+            "cmd": "yarn test"
+          },
+          "coverageMinimum": 80
+        }
+      }
+    },
+    {
+      "name": "ui",
+      "location": "packages/ui",
+      "private": true,
+      "lang": "typescript",
+      "srcDir": "src",
+      "build": {
+        "install": "yarn install",
+        "build": "yarn build",
+        "dev": "yarn storybook"
+      },
+      "quality": {
+        "lint": [
+          {
+            "name": "eslint",
+            "cmd": "yarn lint"
+          }
+        ],
+        "typeCheck": [
+          {
+            "name": "tsc",
+            "cmd": "yarn tsc --noEmit"
+          }
+        ],
+        "tests": {
+          "unit": {
+            "cmd": "yarn test"
+          },
+          "coverageMinimum": 70
+        }
+      }
+    }
+  ],
+  "build": {
+    "install": "yarn install",
+    "build": "yarn build",
+    "dev": "yarn dev"
+  },
+  "quality": {
+    "lint": [
+      {
+        "name": "eslint",
+        "cmd": "yarn lint"
+      }
+    ],
+    "typeCheck": [
+      {
+        "name": "tsc",
+        "cmd": "yarn tsc --noEmit"
+      }
+    ],
+    "tests": {
+      "unit": {
+        "cmd": "yarn test"
+      },
+      "coverageMinimum": 80
+    }
+  },
+  "release": {
+    "artifactDir": "dist",
+    "versioning": "semver"
+  },
+  "conventions": {
+    "naming": {
+      "files": "kebab-case",
+      "classes": "PascalCase",
+      "constants": "UPPER_SNAKE"
+    },
+    "testLayout": [
+      "**/*.test.ts"
+    ],
+    "commitStyle": "conventional-commits"
+  },
+  "environment": {
+    "variables": [
+      {
+        "name": "NODE_ENV",
+        "required": true
+      },
+      {
+        "name": "API_BASE_URL",
+        "required": true
+      }
+    ],
+    "configLayers": [
+      ".env",
+      ".env.local"
+    ]
+  },
+  "security": {
+    "dependencyScans": [
+      {
+        "tool": "yarn-audit",
+        "cmd": "yarn audit --groups dependencies"
+      }
+    ],
+    "codeScans": []
+  },
+  "tools": {
+    "commandsMap": {
+      "lintAll": "yarn workspaces foreach -pt run lint",
+      "typeCheckAll": "yarn workspaces foreach -pt run tsc --noEmit",
+      "testFast": "yarn workspaces foreach -pt run test --watchAll=false",
+      "testFull": "yarn workspaces foreach -pt run test",
+      "buildAll": "yarn workspaces foreach -pt run build"
+    },
+    "packageSelection": {
+      "envVar": "TARGET_PACKAGE",
+      "cliFlag": "--package",
+      "fallback": "core-app"
+    }
+  },
+  "ext": {}
+}
